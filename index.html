@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="robots" content="index,follow">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="description" content="Flawless, bulletproof, and simple text stroking for the web">
+
+	<title>StrokeText.js</title>
+
+	<link rel="stylesheet" type="text/css" href="../inorganik.github.io/assets/css/style.css">
+
+	<script src="strokeText.js"></script>
+	<script src="demo.js"></script>
+	<script>
+
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-7742845-9', 'inorganik.github.io');
+	ga('send', 'pageview');
+
+	</script>
+</head>
+
+<body>
+	<a class="forkMe" href="https://github.com/inorganik/strokeText.js"><img src="../assets/img/forkme_custom_indigo.png" alt="Fork me on GitHub"></a>
+	<div id="wrap">
+		<header>
+			<div id="github"><a class="block" href="https://github.com/inorganik"></a></div>
+			<div class="leaderLine">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</div>
+			<div id="logo"><a class="block" href="http://inorganik.github.io"></a></div>
+		</header>
+		<section>
+			<h1>StrokeText.js &nbsp;<small id="version" class="lt-gray"></small></h1>
+			<p id="tagline"></p>
+			<!-- <p>Install via npm using the package name <code class="indigo large">&nbsp;countup.js&nbsp;</code> or bower using <code class="indigo large">&nbsp;countUp.js</code>.</p> -->
+			<h3 class="marginTop marginBottom"><a class="lime weight700" href="https://github.com/inorganik/strokeText.js">Download on Github</a></h3>
+		</section>
+		<section style="background: #8BC53F; min-height: 100px; padding: 15px 15px 0 15px;">
+			<h1 style="color: #4d63bc; font-weight: 700;" id="myTargetElement"></h1> 
+		</section>
+		<section>
+			<form>
+				<h4 class="weight300">Text:</h4>
+				<textarea id="textSource" onkeyup="assignText()" style="width: 100%; min-height: 50px">strokeText.js - Nearly flawless, bulletproof and simple text stroking for the web.</textarea>
+			</form>
+		</section>
+		<section>
+			<form>
+				<h4 class="inlineLeft noMargin weight300">Params:</h4>
+				<div class="inlineLeft marginLeft marginRight">
+					<label class="inlineLabel">stroke width</label>
+					<input type="text" value="3" id="strokeWidth" style="width:50px">
+				</div>
+				<div class="inlineLeft marginRight">
+					<label class="inlineLabel">stroke color</label>
+					<input type="text" value="white" id="strokeColor" style="width:100px">
+				</div>
+				<input type="button" class="inlineLeft marginRight" value="Stroke" onClick="createStrokeText()" >
+				<input type="button" class="inlineLeft marginRight" value="Reset" onClick="resetStrokeText()">
+			</form>
+		</section>
+		<section>
+			<form>
+				<h4 class="inlineLeft noMargin weight300">Text styles</h4>
+				<div class="inlineLeft marginLeft marginRight">
+					<label class="inlineLabel">font-family</label>
+					<select id="fontFamily" onchange="changeFont()">
+						<option checked="checked" value="Source Sans Pro">Source Sans Pro</option>
+						<option value="SF">SF</option>
+						<option value="serif">serif</option>
+						<option value="sans-serif">sans-serif</option>
+						<option value="cursive">cursive</option>
+					</select>
+				</div>
+				<div class="inlineLeft marginLeft marginRight">
+					<label class="inlineLabel">font-weight</label>
+					<select id="fontWeight" onchange="changeFontWeight()">
+						<option checked="checked" value="700">700</option>
+						<option value="600">600</option>
+						<option value="400">400</option>
+						<option value="300">300</option>
+						<option value="200">200</option>
+					</select>
+				</div>
+				<div class="inlineLeft marginLeft marginRight">
+					<label class="inlineLabel">font-style</label>
+					<select id="fontStyle" onchange="changeFontStyle()">
+						<option checked="checked" value="normal">normal</option>
+						<option value="italic">italic</option>
+					</select>
+				</div>
+			</form>
+		</section>
+		<section class="marginBottom">
+			<div class="col full marginBottom marginTop">
+				<div class="code-contain marginBottom">
+					<code id="codeVisualizer" class="indigo"></code>
+				</div>
+			</div>
+		</section>
+	</div>
+
+</body>
+</html>
