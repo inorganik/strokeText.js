@@ -5,11 +5,13 @@
 */
 
 var target, strokeText, textSource,
-	tagline = 'Simple text stroking for the web.';
+	tagline = 'Simple, pixel-perfect text stroking for the web.',
+	code = '',
+	demoOptions = {};
 
 window.onload = function() {
 
-	target = document.getElementById('myTargetElement');
+	target = document.getElementById('targetId');
 	strokeText = new StrokeText(target);
 	textSource = document.getElementById('textSource');
 	textSource.value = tagline;
@@ -17,19 +19,21 @@ window.onload = function() {
 
 	document.getElementById('version').innerHTML = 'v '+strokeText.version;
 
+	resetDemo();
 	createStrokeText();
 }
+function objectSize(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
 
 function assignText() {
 	strokeText.reset();
 	var txt = textSource.value;
 	target.innerHTML = txt;
-}
-function getWidthNum() {
-	return parseFloat(document.getElementById('strokeWidth').value);
-}
-function getColor() {
-	return document.getElementById('strokeColor').value;
 }
 function createStrokeText() {
 	assignText();
@@ -38,13 +42,12 @@ function createStrokeText() {
 
 	strokeText.stroke(strokeWidth, strokeColor);
 
-	var code = 'var strokeText = new StrokeText(\'myTargetElement\');<br>';
-	code += 'strokeText.stroke('+strokeWidth+', \''+strokeColor+'\');';
+	code += 'strokeText.stroke('+strokeWidth+', \''+strokeColor+'\');<br>';
 	updateCodeVisualizer(code);
 }
 function resetStrokeText() {
 	strokeText.reset();
-	var code = 'strokeText.reset();';
+	code += 'strokeText.reset();<br>';
 	updateCodeVisualizer(code);
 }
 function updateCodeVisualizer(code) {
@@ -53,8 +56,31 @@ function updateCodeVisualizer(code) {
 }
 function resetDemo() {
 	strokeText.reset();
-	strokeText = new StrokeText(target);
+	strokeText = new StrokeText(target, demoOptions);
+	if (objectSize(demoOptions) > 0) {
+		console.log(demoOptions);
+		code = 'var options = {<br>';
+		for (var key in demoOptions) {
+			if (key === 'lineDashArray') {
+				var lineDashArray = demoOptions[key];
+				code += '&emsp;&emsp;'+key+': ['+lineDashArray[0]+', '+lineDashArray[1]+'],<br>'
+			}
+			else if (key === 'miterLimit') {
+				code += '&emsp;&emsp;'+key+': '+demoOptions[key]+',<br>'
+			}
+			else {
+				code += '&emsp;&emsp;'+key+': \''+demoOptions[key]+'\',<br>'
+			}
+		}
+		code += '};<br>';
+		code += 'var strokeText = new StrokeText(\'targetId\', options);<br>';
+	} else {
+		code = 'var strokeText = new StrokeText(\'targetId\');<br>';
+	}
 }
+/*
+	TEXT STYLES
+*/
 function changeFont() {
 	resetDemo();
 	var font = document.getElementById('fontFamily').value;
@@ -76,9 +102,48 @@ function changeFontStyle() {
 	target.style.fontStyle = fontStyle;
 	createStrokeText();
 }
+// TODO: support text decoration
 function changeDecoration() {
 	resetDemo();
 	var decoration = document.getElementById('textDecoration').value;
 	target.style.textDecoration = decoration;
 	createStrokeText();
 }
+function changeAlignment() {
+	resetDemo();
+	var align = document.getElementById('alignment').value;
+	target.style.textAlign = align;
+	createStrokeText();
+}
+/*
+	OPTIONS
+*/
+function changeLineJoin() {
+	var lineJoin = document.getElementById('lineJoin').value;
+	demoOptions.lineJoin = lineJoin;
+	resetDemo();
+	createStrokeText();
+}
+function changeLineCap() {
+	var lineCap = document.getElementById('lineCap').value;
+	demoOptions.lineCap = lineCap;
+	resetDemo();
+	createStrokeText();
+}
+function changeLineDashArray() {
+	var line = document.getElementById('lineDashArrayLine').value;
+	var gap = document.getElementById('lineDashArrayGap').value;
+	demoOptions.lineDashArray = [line, gap];
+	console.log('line dash array', demoOptions.lineDashArray);
+	resetDemo();
+	createStrokeText();
+}
+function changeMiterLimit() {
+	var miterLimit = document.getElementById('miterLimit').value;
+	demoOptions.miterLimit = parseFloat(miterLimit);
+	resetDemo();
+	createStrokeText();
+}
+
+
+

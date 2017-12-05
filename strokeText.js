@@ -5,11 +5,27 @@
 
 */
 
-var StrokeText = function(elem) {
+var StrokeText = function(elem, options) {
 
 	var self = this;
 	self.version = '1.0';
 	self.elem = (typeof elem === 'string') ? document.getElementById(elem) : elem;
+
+	// default options
+	self.options = {
+		lineCap: 'round',
+		lineJoin: 'round',
+		miterLimit: 10,
+		lineDashArray: [0, 0]
+	}
+	// extend default options with passed options object
+	if (options && typeof options === 'object') {
+		for (var key in self.options) {
+			if (options.hasOwnProperty(key) && options[key] !== null) {
+				self.options[key] = options[key];
+			}
+		}
+	}
 
 	// helper functions
 	function insertAfter(node, refNode) {
@@ -22,26 +38,45 @@ var StrokeText = function(elem) {
 			node.parentNode.removeChild(node);
 		}
 	}
+	// canvas doesn't wrap text
 	function wrapText(context, text, x, y, maxWidth, lineHeight) {
 		var words = text.split(' '),
-			line = '';
-
-		for (var n = 0, len = words.length; n < len; n++) {
+			line = '',
+			lastSegment = '';
+		function measureAndProcess(segment, i) {
 			var testLine = line;
-			if (n > 0) {
-				testLine += ' '+ words[n];
-			} else {
-				testLine += words[n];
+			if (i > 0 && lastSegment.substr(-1) !== '-') {
+				testLine += ' '+ segment;
+			}
+			else {
+				testLine += segment;
 			}
 			var metrics = context.measureText(testLine);
-			if (metrics.width > maxWidth && n > 0) {
+			if (metrics.width > maxWidth && i > 0) {
 				context.strokeText(line, x, y);
-				line = words[n];
+				line = segment;
 				y += lineHeight;
-			} else {
+			}
+			else {
 				line = testLine;
 			}
+			lastSegment = segment
 		}
+		words.forEach(function(word, i) {
+			if (word.indexOf('-') > -1) {
+				var nextWord = word;
+				while (nextWord.indexOf('-') > -1) {
+					var hyphen = nextWord.indexOf('-') + 1,
+						segment = nextWord.substring(0, hyphen),
+						nextWord = nextWord.substring(hyphen);
+					measureAndProcess(segment, i);
+				}
+				measureAndProcess(nextWord, i);
+			}
+			else {
+				measureAndProcess(word, i);
+			}
+		});
 		context.strokeText(line, x, y);
 	}
 
@@ -60,7 +95,7 @@ var StrokeText = function(elem) {
 		}
 	}
 
-
+	// main functionality
 	self.stroke = function(strokeWidth, strokeColor) {
 
 		self.reset();
@@ -72,13 +107,20 @@ var StrokeText = function(elem) {
 		var txtLineHeight = testText.offsetHeight;
 		remove(testText);
 
-		// extract text properties
+		// extract elem styles
 		self.elemStyle = window.getComputedStyle(self.elem);
 		self.inlineStyles = {};
 		for (var i = 0, len = self.elem.style.length; i < len; i++) {
 			var styleKey = self.elem.style[i];
 			self.inlineStyles[styleKey] = self.elemStyle[styleKey];
 		}
+
+		// adjust elem styles before measurements
+		self.elem.style.width = '100%';
+		self.elem.style.boxSizing = 'border-box';
+		self.elem.style.padding = '0 ' + strokeWidth + 'px';
+			
+		// measurements
 		var width = self.elem.offsetWidth,
 			height = self.elem.offsetHeight,
 			txt = self.elem.textContent.trim(),
@@ -120,8 +162,6 @@ var StrokeText = function(elem) {
 		remove(self.elem);
 		self.elem.style.position = 'absolute';
 		self.elem.style.top = 0;
-		self.elem.style.width = '100%';
-  		self.elem.style.padding = '0 '+ edgePos +'px';
 		txtContain.appendChild(self.elem);
 		txtContain.appendChild(txtCanvas);
 		
@@ -129,7 +169,13 @@ var StrokeText = function(elem) {
 		var can = document.getElementById(self.canvasId),
 			ctx = can.getContext('2d'),
 			canvasEdgePos = 0,
-			canvasTopPos = 0; 
+    		canvasMaxWidth = width - (edgePos * 2),
+			canvasTopPos = txtLineHeight - parseFloat(fontSize);
+		// detect Firefox, because it renders textBaseline differently
+		if ((/firefox/i).test(navigator.userAgent)) {
+			canvasTopPos -= strokeWidth / 2;
+		}
+
 		switch (txtAlign) {
 			case 'center':
 				canvasEdgePos = width / 2;
@@ -145,11 +191,15 @@ var StrokeText = function(elem) {
 		}
 		if (ctx) {
 			ctx.font = canvasFont;
-			ctx.textBaseline = 'top';
+			ctx.textBaseline = 'hanging';
 			ctx.textAlign = txtAlign;
 			ctx.strokeStyle = strokeColor;
+			ctx.lineJoin = self.options.lineJoin;
+			ctx.lineCap = self.options.lineCap;
+			ctx.setLineDash(self.options.lineDashArray);
+			ctx.miterLimit = self.options.miterLimit;
 			ctx.lineWidth = strokeWidth * 2;
-			wrapText(ctx, txt, canvasEdgePos, canvasTopPos, width, txtLineHeight);
+			wrapText(ctx, txt, canvasEdgePos, canvasTopPos, canvasMaxWidth, txtLineHeight);
 		}
 	};
 }

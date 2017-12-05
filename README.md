@@ -14,7 +14,7 @@ strokeText.js uses the canvas API to draw stroked text in a container with your 
 
 Simply create an instance, which accepts a reference to your text element,
 ```js
-var strokeText = new StrokeText('myTargetElement');
+var strokeText = new StrokeText('targetId');
 ```
 Then call `stroke()`, which takes 2 args:
 - stroke width
@@ -27,9 +27,23 @@ You can also call `reset()` to remove the stroke.
 ```js
 strokeText.reset();
 ```
+#### Options
+You can optionally pass options to the initializer:
+```js
+// defaults shown
+var options = {
+	lineCap: 'round', // ['round', 'butt', 'square']
+	lineJoin: 'round', // ['bevel', 'round', 'miter']
+	miterLimit: 10, // control spikeyness
+	lineDashArray: [0, 0] // for dashed lines: [line, gap]
+}
+var strokeText = new StrokeText('targetId', options);
+```
 
 ### Known issues
 
 - Does not support `text-decoration`, e.g. line-through or underline.
 - Very thick strokes on very light weighted fonts can leave cutouts on circle shapes like periods.
-- Un-mitered corners can occur on certain fonts (Arial).
+
+
+https://jsfiddle.net/fpnx33z2/

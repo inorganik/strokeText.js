@@ -6,7 +6,7 @@
 	<meta name="robots" content="index,follow">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<meta name="description" content="Flawless, bulletproof, and simple text stroking for the web">
+	<meta name="description" content="Simple, pixel-perfect text stroking for the web">
 
 	<title>StrokeText.js</title>
 
@@ -38,11 +38,17 @@
 		<section>
 			<h1>StrokeText.js &nbsp;<small id="version" class="lt-gray"></small></h1>
 			<p id="tagline"></p>
+			<ul>
+				<li>Strokes do not overlap your text like they do with <code>-webkit-text-stroke</code></li>
+				<li>Supports nearly all browsers except IE8 and below</li>
+				<li>Selectable text</li>
+				<li>No dependencies</li>
+			</ul>
 			<!-- <p>Install via npm using the package name <code class="indigo large">&nbsp;countup.js&nbsp;</code> or bower using <code class="indigo large">&nbsp;countUp.js</code>.</p> -->
 			<h3 class="marginTop marginBottom"><a class="lime weight700" href="https://github.com/inorganik/strokeText.js">Download on Github</a></h3>
 		</section>
 		<section style="background: #8BC53F; min-height: 100px; padding: 15px 15px 0 15px;">
-			<h1 style="color: #4d63bc; font-weight: 700;" id="myTargetElement"></h1> 
+			<h1 style="color: #4d63bc; font-weight: 700;" id="targetId"></h1> 
 		</section>
 		<section>
 			<form>
@@ -52,10 +58,10 @@
 		</section>
 		<section>
 			<form>
-				<h4 class="inlineLeft noMargin weight300">Params:</h4>
+				<h4 class="inlineLeft noMargin weight300">Methods & Params:</h4>
 				<div class="inlineLeft marginLeft marginRight">
 					<label class="inlineLabel">stroke width</label>
-					<input type="text" value="3" id="strokeWidth" style="width:50px">
+					<input type="number" value="3" step="1" id="strokeWidth" style="width:50px">
 				</div>
 				<div class="inlineLeft marginRight">
 					<label class="inlineLabel">stroke color</label>
@@ -67,7 +73,45 @@
 		</section>
 		<section>
 			<form>
-				<h4 class="inlineLeft noMargin weight300">Text styles</h4>
+				<h4 class="inlineLeft noMargin weight300">Options:</h4>
+				<div class="inlineLeft marginLeft marginRight">
+					<label class="inlineLabel">line-join</label>
+					<select id="lineJoin" onchange="changeLineJoin()">
+						<option checked="checked" value="round">round (default)</option>
+						<option value="bevel">bevel</option>
+						<option value="miter">miter</option>
+					</select>
+				</div>
+				<div class="inlineLeft marginRight">
+					<label class="inlineLabel">line-cap</label>
+					<select id="lineCap" onchange="changeLineCap()">
+						<option checked="checked" value="round">round (default)</option>
+						<option value="butt">butt</option>
+						<option value="square">square</option>
+					</select>
+				</div>
+				<div class="inlineLeft marginRight">
+					<label class="inlineLabel">line-dash-array</label>
+					<input type="number" step="1" id="lineDashArrayLine" onchange="changeLineDashArray()" style="width:60px" placeholder="line">
+					<input type="number" step="1" id="lineDashArrayGap" onchange="changeLineDashArray()" style="width:60px" placeholder="gap">
+				</div>
+				<div class="inlineLeft marginRight">
+					<label class="inlineLabel">miter limit</label>
+					<input type="number" step="1" id="miterLimit" onchange="changeMiterLimit()" value="10" style="width:50px">
+				</div>
+			</form>
+		</section>
+		<section>
+			<form>
+				<h4 class="inlineLeft noMargin weight300">Text styles (for demo):</h4>
+				<div class="inlineLeft marginLeft marginRight">
+					<label class="inlineLabel">text-align</label>
+					<select id="alignment" onchange="changeAlignment()">
+						<option checked="checked" value="left">left</option>
+						<option value="center">center</option>
+						<option value="right">right</option>
+					</select>
+				</div>
 				<div class="inlineLeft marginLeft marginRight">
 					<label class="inlineLabel">font-family</label>
 					<select id="fontFamily" onchange="changeFont()">
@@ -83,6 +127,7 @@
 					<select id="fontWeight" onchange="changeFontWeight()">
 						<option checked="checked" value="700">700</option>
 						<option value="600">600</option>
+						<option value="500">500</option>
 						<option value="400">400</option>
 						<option value="300">300</option>
 						<option value="200">200</option>
@@ -99,7 +144,7 @@
 		</section>
 		<section class="marginBottom">
 			<div class="col full marginBottom marginTop">
-				<div class="code-contain marginBottom">
+				<div class="code-contain indigo">
 					<code id="codeVisualizer" class="indigo"></code>
 				</div>
 			</div>
