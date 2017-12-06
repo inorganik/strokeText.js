@@ -79,7 +79,6 @@ function resetStrokeText() {
 	updateCodeVisualizer(code);
 }
 function initAndExecuteStrokeText() {
-	console.log('init and execute');
 	// need delay to allow browser to render text style changes
 	setTimeout(function() {
 		initStrokeText();

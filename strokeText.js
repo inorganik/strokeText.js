@@ -8,7 +8,7 @@
 var StrokeText = function(elem, options) {
 
 	var self = this;
-	self.version = '1.0';
+	self.version = '0.9.0';
 	self.elem = (typeof elem === 'string') ? document.getElementById(elem) : elem;
 
 	// default options
