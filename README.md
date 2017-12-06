@@ -12,7 +12,9 @@ strokeText.js uses the canvas API to draw stroked text in a container with your 
 
 ### Usage
 
-Simply create an instance, which accepts an ID string or reference to your text element,
+Install via npm with the package name `stroketext.js` or simply include `strokeText.min.js` in your project.
+
+For each text element that you desire to stroke, create an instance, which accepts an ID string or reference to your text element:
 ```js
 var strokeText = new StrokeText('targetId');
 ```
