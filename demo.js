@@ -4,23 +4,23 @@
 	Only used for the demo, not a dependency
 */
 
-var target, strokeText, textSource,
+var target, strokeText, textSource, resizeTimeout,
 	tagline = 'Simple, pixel-perfect text stroking for the web.',
 	code = '',
-	demoOptions = {};
+	demoOptions = {},
+	fontSize = 2.3,
+	fontSizeIncrement = 0.5;
 
 window.onload = function() {
 
 	target = document.getElementById('targetId');
-	strokeText = new StrokeText(target);
+	setFontSizeLabel();
 	textSource = document.getElementById('textSource');
 	textSource.value = tagline;
 	document.getElementById('tagline').innerHTML = tagline;
 
-	document.getElementById('version').innerHTML = 'v '+strokeText.version;
-
-	resetDemo();
-	createStrokeText();
+	initStrokeText();
+	executeStroke();
 }
 function objectSize(obj) {
     var size = 0, key;
@@ -30,35 +30,15 @@ function objectSize(obj) {
     return size;
 };
 
-function assignText() {
-	strokeText.reset();
-	var txt = textSource.value;
-	target.innerHTML = txt;
-}
-function createStrokeText() {
-	assignText();
-	var strokeWidth = parseFloat(document.getElementById('strokeWidth').value);
-	var strokeColor = document.getElementById('strokeColor').value;
 
-	strokeText.stroke(strokeWidth, strokeColor);
-
-	code += 'strokeText.stroke('+strokeWidth+', \''+strokeColor+'\');<br>';
-	updateCodeVisualizer(code);
-}
-function resetStrokeText() {
-	strokeText.reset();
-	code += 'strokeText.reset();<br>';
-	updateCodeVisualizer(code);
-}
 function updateCodeVisualizer(code) {
 	var visualizer = document.getElementById('codeVisualizer');
 	visualizer.innerHTML = code;	
 }
-function resetDemo() {
-	strokeText.reset();
+function initStrokeText() {
 	strokeText = new StrokeText(target, demoOptions);
+	document.getElementById('version').innerHTML = 'v '+strokeText.version;
 	if (objectSize(demoOptions) > 0) {
-		console.log(demoOptions);
 		code = 'var options = {<br>';
 		for (var key in demoOptions) {
 			if (key === 'lineDashArray') {
@@ -78,71 +58,133 @@ function resetDemo() {
 		code = 'var strokeText = new StrokeText(\'targetId\');<br>';
 	}
 }
-/*
-	TEXT STYLES
-*/
-function changeFont() {
-	resetDemo();
-	var font = document.getElementById('fontFamily').value;
-	if (font === 'SF') {
-		font = '-apple-system, BlinkMacSystemFont';
-	}
-	target.style.fontFamily = font;
-	createStrokeText();
+function assignText() {
+	strokeText.reset();
+	var txt = textSource.value;
+	target.innerHTML = txt;
 }
-function changeFontWeight() {
-	resetDemo();
-	var weight = document.getElementById('fontWeight').value;
-	target.style.fontWeight = parseInt(weight);
-	createStrokeText();
+function executeStroke() {
+	assignText();
+	var strokeWidth = parseFloat(document.getElementById('strokeWidth').value);
+	var strokeColor = document.getElementById('strokeColor').value;
+
+	strokeText.stroke(strokeWidth, strokeColor);
+
+	code += 'strokeText.stroke('+strokeWidth+', \''+strokeColor+'\');<br>';
+	updateCodeVisualizer(code);
 }
-function changeFontStyle() {
-	resetDemo();
-	var fontStyle = document.getElementById('fontStyle').value;
-	target.style.fontStyle = fontStyle;
-	createStrokeText();
+function resetStrokeText() {
+	strokeText.reset();
+	code += 'strokeText.reset();<br>';
+	updateCodeVisualizer(code);
 }
-// TODO: support text decoration
-function changeDecoration() {
-	resetDemo();
-	var decoration = document.getElementById('textDecoration').value;
-	target.style.textDecoration = decoration;
-	createStrokeText();
+function initAndExecuteStrokeText() {
+	console.log('init and execute');
+	// need delay to allow browser to render text style changes
+	setTimeout(function() {
+		initStrokeText();
+		executeStroke();
+	}, 100);
 }
-function changeAlignment() {
-	resetDemo();
-	var align = document.getElementById('alignment').value;
-	target.style.textAlign = align;
-	createStrokeText();
+// responsive!
+function handleViewportChange() {
+	clearTimeout(resizeTimeout);
+	resizeTimeout = setTimeout(function() {
+		resetStrokeText();
+		initAndExecuteStrokeText();
+	}, 100);
 }
+
+window.onresize = handleViewportChange;
+window.onorientationchange = handleViewportChange;
 /*
 	OPTIONS
 */
 function changeLineJoin() {
 	var lineJoin = document.getElementById('lineJoin').value;
 	demoOptions.lineJoin = lineJoin;
-	resetDemo();
-	createStrokeText();
+	initAndExecuteStrokeText();
 }
 function changeLineCap() {
 	var lineCap = document.getElementById('lineCap').value;
 	demoOptions.lineCap = lineCap;
-	resetDemo();
-	createStrokeText();
+	initAndExecuteStrokeText();
 }
 function changeLineDashArray() {
+	resetStrokeText();
 	var line = document.getElementById('lineDashArrayLine').value;
 	var gap = document.getElementById('lineDashArrayGap').value;
 	demoOptions.lineDashArray = [line, gap];
 	console.log('line dash array', demoOptions.lineDashArray);
-	resetDemo();
-	createStrokeText();
+	initAndExecuteStrokeText();
 }
 function changeMiterLimit() {
 	var miterLimit = document.getElementById('miterLimit').value;
 	demoOptions.miterLimit = parseFloat(miterLimit);
-	resetDemo();
-	createStrokeText();
+	initAndExecuteStrokeText();
+}
+/*
+	TEXT STYLES
+*/
+function changeAlignment() {
+	resetStrokeText();
+	var align = document.getElementById('alignment').value;
+	target.style.textAlign = align;
+	executeStroke();
+}
+function changeFontStyle() {
+	resetStrokeText();
+	var fontStyle = document.getElementById('fontStyle').value;
+	target.style.fontStyle = fontStyle;
+	initAndExecuteStrokeText();
+}
+function changeFontWeight() {
+	resetStrokeText();
+	var weight = document.getElementById('fontWeight').value;
+	target.style.fontWeight = parseInt(weight);
+	initAndExecuteStrokeText();
+}
+function changeFont() {
+	resetStrokeText();
+	var font = document.getElementById('fontFamily').value;
+	if (font === 'SF') {
+		font = '-apple-system, BlinkMacSystemFont';
+	}
+	target.style.fontFamily = font;
+	initAndExecuteStrokeText();
+}
+function setFontSizeLabel() {
+	console.trace();
+	var fontSizeString = fontSize + 'em';
+	document.getElementById('fontSize').innerHTML = fontSizeString;
+	return fontSizeString;
+}
+function setFontSize() {
+	fontSize = Math.round(fontSize * 100) / 100;
+	var fontSizeString = setFontSizeLabel();
+	target.style.fontSize = fontSizeString;
+	initAndExecuteStrokeText();
+}
+function increaseFontSize() {
+	if (fontSize > 5) {
+		return;
+	}
+	resetStrokeText();
+	fontSize += fontSizeIncrement;
+	setFontSize();
+}
+function decreaseFontSize() {
+	var newSize = fontSize -= fontSizeIncrement;
+	if (newSize > 0) {
+		fontSize = newSize
+	}
+	resetStrokeText();
+	setFontSize();
+}
+// TODO: support text decoration
+function changeDecoration() {
+	var decoration = document.getElementById('textDecoration').value;
+	target.style.textDecoration = decoration;
 }
 
 

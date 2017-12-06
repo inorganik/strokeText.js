@@ -165,29 +165,30 @@ var StrokeText = function(elem, options) {
 		txtContain.appendChild(self.elem);
 		txtContain.appendChild(txtCanvas);
 		
-		// canvas text
+		// rendering stroked text
 		var can = document.getElementById(self.canvasId),
 			ctx = can.getContext('2d'),
 			canvasEdgePos = 0,
-    		canvasMaxWidth = width - (edgePos * 2),
-			canvasTopPos = txtLineHeight - parseFloat(fontSize);
-			
-		if (parseFloat(fontSize) < 40) {
-			canvasTopPos += 1; // ugly but necessary
-		}
-		// detect Firefox, because it renders textBaseline differently
+			canvasMaxWidth = width - (edgePos * 2),
+			canvasTopPos = 0,
+			textBaseline = 'top';
+		// detect Firefox, because it renders textBaseline differently >:(
 		if ((/firefox/i).test(navigator.userAgent)) {
-			canvasTopPos -= strokeWidth / 2;
+			console.log('firefox!');
+			textBaseline = 'hanging';
+			canvasTopPos = txtLineHeight - parseFloat(fontSize) - (strokeWidth / 2);
+			if (parseFloat(fontSize) < 40) {
+				canvasTopPos += 1; // ugly but necessary
+			}
 		}
-
 		switch (txtAlign) {
 			case 'center':
 				canvasEdgePos = width / 2;
 				self.elem.style.left = 0;
 				break;
-			case 'right': 
+			case 'right':
 				canvasEdgePos = width - edgePos;
-		 		self.elem.style.right = edgePos;
+				self.elem.style.right = edgePos;
 				break;
 			default:
 				canvasEdgePos += edgePos;
@@ -195,7 +196,7 @@ var StrokeText = function(elem, options) {
 		}
 		if (ctx) {
 			ctx.font = canvasFont;
-			ctx.textBaseline = 'hanging';
+			ctx.textBaseline = textBaseline;
 			ctx.textAlign = txtAlign;
 			ctx.strokeStyle = strokeColor;
 			ctx.lineJoin = self.options.lineJoin;

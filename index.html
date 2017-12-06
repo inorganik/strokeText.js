@@ -42,7 +42,7 @@
 				<li>Strokes do not overlap your text like they do with <code>-webkit-text-stroke</code></li>
 				<li>Supports nearly all browsers except IE8 and below</li>
 				<li>Selectable text</li>
-				<li>No dependencies</li>
+				<li>Dependency-free</li>
 			</ul>
 			<!-- <p>Install via npm using the package name <code class="indigo large">&nbsp;countup.js&nbsp;</code> or bower using <code class="indigo large">&nbsp;countUp.js</code>.</p> -->
 			<h3 class="marginTop marginBottom"><a class="lime weight700" href="https://github.com/inorganik/strokeText.js">Download on Github</a></h3>
@@ -53,21 +53,21 @@
 		<section>
 			<form>
 				<h4 class="weight300">Text:</h4>
-				<textarea id="textSource" onkeyup="assignText()" style="width: 100%; min-height: 50px">strokeText.js - Nearly flawless, bulletproof and simple text stroking for the web.</textarea>
+				<textarea id="textSource" onkeyup="assignText()" style="width: 100%; min-height: 50px"></textarea>
 			</form>
 		</section>
 		<section>
 			<form>
 				<h4 class="inlineLeft noMargin weight300">Methods & Params:</h4>
 				<div class="inlineLeft marginLeft marginRight">
-					<label class="inlineLabel">stroke width</label>
+					<label class="inlineLabel">stroke width:</label>
 					<input type="number" value="3" step="1" id="strokeWidth" style="width:50px">
 				</div>
 				<div class="inlineLeft marginRight">
-					<label class="inlineLabel">stroke color</label>
+					<label class="inlineLabel">stroke color:</label>
 					<input type="text" value="white" id="strokeColor" style="width:100px">
 				</div>
-				<input type="button" class="inlineLeft marginRight" value="Stroke" onClick="createStrokeText()" >
+				<input type="button" class="inlineLeft marginRight" value="Stroke" onClick="executeStroke()" >
 				<input type="button" class="inlineLeft marginRight" value="Reset" onClick="resetStrokeText()">
 			</form>
 		</section>
@@ -75,7 +75,7 @@
 			<form>
 				<h4 class="inlineLeft noMargin weight300">Options:</h4>
 				<div class="inlineLeft marginLeft marginRight">
-					<label class="inlineLabel">line-join</label>
+					<label class="inlineLabel">line-join:</label>
 					<select id="lineJoin" onchange="changeLineJoin()">
 						<option checked="checked" value="round">round (default)</option>
 						<option value="bevel">bevel</option>
@@ -83,7 +83,7 @@
 					</select>
 				</div>
 				<div class="inlineLeft marginRight">
-					<label class="inlineLabel">line-cap</label>
+					<label class="inlineLabel">line-cap:</label>
 					<select id="lineCap" onchange="changeLineCap()">
 						<option checked="checked" value="round">round (default)</option>
 						<option value="butt">butt</option>
@@ -91,12 +91,12 @@
 					</select>
 				</div>
 				<div class="inlineLeft marginRight">
-					<label class="inlineLabel">line-dash-array</label>
+					<label class="inlineLabel">line-dash-array:</label>
 					<input type="number" step="1" id="lineDashArrayLine" onchange="changeLineDashArray()" style="width:60px" placeholder="line">
 					<input type="number" step="1" id="lineDashArrayGap" onchange="changeLineDashArray()" style="width:60px" placeholder="gap">
 				</div>
 				<div class="inlineLeft marginRight">
-					<label class="inlineLabel">miter limit</label>
+					<label class="inlineLabel">miter limit:</label>
 					<input type="number" step="1" id="miterLimit" onchange="changeMiterLimit()" value="10" style="width:50px">
 				</div>
 			</form>
@@ -105,7 +105,7 @@
 			<form>
 				<h4 class="inlineLeft noMargin weight300">Text styles (for demo):</h4>
 				<div class="inlineLeft marginLeft marginRight">
-					<label class="inlineLabel">text-align</label>
+					<label class="inlineLabel">text-align:</label>
 					<select id="alignment" onchange="changeAlignment()">
 						<option checked="checked" value="left">left</option>
 						<option value="center">center</option>
@@ -113,7 +113,19 @@
 					</select>
 				</div>
 				<div class="inlineLeft marginLeft marginRight">
-					<label class="inlineLabel">font-family</label>
+					<label class="inlineLabel">font:</label>
+					<select id="fontStyle" onchange="changeFontStyle()">
+						<option checked="checked" value="normal">normal</option>
+						<option value="italic">italic</option>
+					</select>
+					<select id="fontWeight" onchange="changeFontWeight()">
+						<option checked="checked" value="700">700</option>
+						<option value="600">600</option>
+						<option value="500">500</option>
+						<option value="400">400</option>
+						<option value="300">300</option>
+						<option value="200">200</option>
+					</select>
 					<select id="fontFamily" onchange="changeFont()">
 						<option checked="checked" value="Source Sans Pro">Source Sans Pro</option>
 						<option value="SF">SF</option>
@@ -123,22 +135,9 @@
 					</select>
 				</div>
 				<div class="inlineLeft marginLeft marginRight">
-					<label class="inlineLabel">font-weight</label>
-					<select id="fontWeight" onchange="changeFontWeight()">
-						<option checked="checked" value="700">700</option>
-						<option value="600">600</option>
-						<option value="500">500</option>
-						<option value="400">400</option>
-						<option value="300">300</option>
-						<option value="200">200</option>
-					</select>
-				</div>
-				<div class="inlineLeft marginLeft marginRight">
-					<label class="inlineLabel">font-style</label>
-					<select id="fontStyle" onchange="changeFontStyle()">
-						<option checked="checked" value="normal">normal</option>
-						<option value="italic">italic</option>
-					</select>
+					<label class="inlineLabel inlineLeft">font-size: <span class="weight700" id="fontSize"></span></label>
+					<button type="button" class="inlineLeft emojiButton" onClick="increaseFontSize()">🔼</button>
+					<button type="button" class="inlineLeft emojiButton" onClick="decreaseFontSize()">🔽</button>
 				</div>
 			</form>
 		</section>
