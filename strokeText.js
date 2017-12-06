@@ -174,12 +174,8 @@ var StrokeText = function(elem, options) {
 			textBaseline = 'top';
 		// detect Firefox, because it renders textBaseline differently >:(
 		if ((/firefox/i).test(navigator.userAgent)) {
-			console.log('firefox!');
 			textBaseline = 'hanging';
 			canvasTopPos = txtLineHeight - parseFloat(fontSize) - (strokeWidth / 2);
-			if (parseFloat(fontSize) < 40) {
-				canvasTopPos += 1; // ugly but necessary
-			}
 		}
 		switch (txtAlign) {
 			case 'center':

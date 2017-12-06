@@ -66,6 +66,7 @@ window.onorientationchange = handleViewportChange;
 - Does not support `text-decoration`, e.g. strike-through or underline.
 - Very thick strokes on certain fonts can leave cutouts on circle shapes like periods or dotted characters.
 - Emojis don't get stroked 😬 due to the limitations of canvas.
+- Firefox is not always so pixel-perfect _at some font sizes_ because Firefox renders the text-baseline of canvas text differently than every other browser. Currently strokeText.js sniffs user agent and tries to work around this, but it isn't perfect 100% of the time.
 
 ### Contributing
 
@@ -74,4 +75,4 @@ window.onorientationchange = handleViewportChange;
 - Run `npm install` 
 - Run `gulp` to create the minified strokeText module in the dist folder
 
-Fiddle: https://jsfiddle.net/4o6yd73n/
+Fiddle: https://jsfiddle.net/0r9xcL14/

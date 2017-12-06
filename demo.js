@@ -114,7 +114,6 @@ function changeLineDashArray() {
 	var line = document.getElementById('lineDashArrayLine').value;
 	var gap = document.getElementById('lineDashArrayGap').value;
 	demoOptions.lineDashArray = [line, gap];
-	console.log('line dash array', demoOptions.lineDashArray);
 	initAndExecuteStrokeText();
 }
 function changeMiterLimit() {
@@ -153,7 +152,6 @@ function changeFont() {
 	initAndExecuteStrokeText();
 }
 function setFontSizeLabel() {
-	console.trace();
 	var fontSizeString = fontSize + 'em';
 	document.getElementById('fontSize').innerHTML = fontSizeString;
 	return fontSizeString;
