@@ -6,7 +6,7 @@ Simple text stroking for the web
 - Selectable text
 - No dependencies
 
-## [Try the demo](http://inorganik.github.io/strokeText.js)
+## [Try the demo](https://inorganik.github.io/strokeText.js/)
 
 strokeText.js uses the canvas API to draw stroked text in a container with your text element positioned absolutely on top of it, allowing text to remain intact and selectable. 
 
@@ -45,5 +45,4 @@ var strokeText = new StrokeText('targetId', options);
 - Does not support `text-decoration`, e.g. line-through or underline.
 - Very thick strokes on very light weighted fonts can leave cutouts on circle shapes like periods.
 
-
-https://jsfiddle.net/fpnx33z2/
+Fiddle: https://jsfiddle.net/vqsz0u3u/

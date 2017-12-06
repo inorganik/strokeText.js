@@ -171,6 +171,10 @@ var StrokeText = function(elem, options) {
 			canvasEdgePos = 0,
     		canvasMaxWidth = width - (edgePos * 2),
 			canvasTopPos = txtLineHeight - parseFloat(fontSize);
+			
+		if (parseFloat(fontSize) < 40) {
+			canvasTopPos += 1; // ugly but necessary
+		}
 		// detect Firefox, because it renders textBaseline differently
 		if ((/firefox/i).test(navigator.userAgent)) {
 			canvasTopPos -= strokeWidth / 2;
