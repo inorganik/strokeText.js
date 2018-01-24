@@ -8,7 +8,7 @@
 var StrokeText = function(elem, options) {
 
 	var self = this;
-	self.version = '0.10.0';
+	self.version = '0.10.1';
 	self.elem = (typeof elem === 'string') ? document.getElementById(elem) : elem;
 
 	// default options
@@ -161,11 +161,8 @@ var StrokeText = function(elem, options) {
 		insertAfter(txtContain, self.elem);
 		remove(self.elem);
 		self.elem.style.position = 'absolute';
-		var elemTopPos = strokeWidth + 1;
-		if (/firefox/i.test(window.navigator.userAgent)) {
-			elemTopPos -= 1; // firefox renders text baseline slightly differently
-		}
-		self.elem.style.top = elemTopPos + 'px';
+		var elemTopPos = strokeWidth + 'px';
+		self.elem.style.top = elemTopPos;
 		if (self.options.debug) self.elem.style.border = '1px yellow solid';
 		txtContain.appendChild(self.elem);
 		txtContain.appendChild(txtCanvas);
@@ -182,7 +179,6 @@ var StrokeText = function(elem, options) {
 			console.info('┎--- strokeText.js debug');
 			console.info('┃ canvasFont:', canvasFont);
 			console.info('┃ canvasTopPos:', canvasTopPos);
-			console.info('┃ elemTopPos:', elemTopPos);
 			console.info('┃ txtLineHeight:', txtLineHeight);
 			console.info('┖---');
 		}
