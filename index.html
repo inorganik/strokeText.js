@@ -46,18 +46,21 @@
 			</ul>
 			<p>Be sure to checkout the <a href="https://github.com/inorganik/strokeText.js/">README</a> for detailed usage instructions, how it works, and known issues.</p>
 			<p>🆒&ensp;You might also like <a href="https://inorganik.github.io/countUp.js/">countUp.js</a> &mdash; Animate a numerical value by counting to it.</p>
-			<p>Install via npm using the package name <code class="indigo large">&nbsp;stroketext.js&nbsp;</code></p>
+			<p>Install via npm using the package name &nbsp;<code class="indigo large">stroketext.js</code></p>
 			<h3 class="marginTop marginBottom"><a class="lime weight700" href="https://github.com/inorganik/strokeText.js">Download on Github</a></h3>
 		</section>
+		<!-- STROKE TARGET -->
 		<section style="background: #8BC53F; min-height: 100px; padding: 15px 15px 0 15px;">
-			<h1 style="color: #4d63bc; font-weight: 700; line-height: 1.5em; font-size:3.3em;" id="targetId"></h1> 
+			<h1 style="color: #4d63bc; font-weight: 700; line-height: 1.2em;" id="targetId"></h1> 
 		</section>
+		<!-- TEXTAREA -->
 		<section>
 			<form>
 				<h4 class="weight300">Text:</h4>
 				<textarea id="textSource" onkeyup="assignText()" style="width: 100%; min-height: 50px"></textarea>
 			</form>
 		</section>
+		<!-- METHODS & PARAMS -->
 		<section>
 			<form>
 				<h4 class="inlineLeft noMargin weight300">Methods & Params:</h4>
@@ -73,6 +76,7 @@
 				<input type="button" class="inlineLeft marginRight" value="Reset" onClick="resetStrokeText()">
 			</form>
 		</section>
+		<!-- OPTIONS -->
 		<section>
 			<form>
 				<h4 class="inlineLeft noMargin weight300">Options:</h4>
@@ -101,8 +105,13 @@
 					<label class="inlineLabel">miter limit:</label>
 					<input type="number" step="1" id="miterLimit" onchange="changeMiterLimit()" value="10" style="width:50px">
 				</div>
+				<div class="inlineLeft">
+					<label class="inlineLabel">debug:</label>
+					<input type="checkbox" onClick="toggleDebug(this)">
+				</div>
 			</form>
 		</section>
+		<!-- TEXT STYLES -->
 		<section>
 			<form>
 				<h4 class="inlineLeft noMargin weight300">Text styles (for demo):</h4>
@@ -143,6 +152,7 @@
 				</div>
 			</form>
 		</section>
+		<!-- CODE VISUALIZER -->
 		<section class="marginBottom">
 			<div class="col full marginBottom marginTop">
 				<div class="code-contain indigo">

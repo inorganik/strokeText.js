@@ -16,7 +16,8 @@ var StrokeText = function(elem, options) {
 		lineCap: 'round',
 		lineJoin: 'round',
 		miterLimit: 10,
-		lineDashArray: [0, 0]
+		lineDashArray: [0, 0],
+		debug: false
 	}
 	// extend default options with passed options object
 	if (options && typeof options === 'object') {
@@ -104,13 +105,6 @@ var StrokeText = function(elem, options) {
 		strokeWidth = Math.abs(strokeWidth);
 		strokeColor = (typeof strokeColor === 'string') ? strokeColor : 'red';
 
-		// get precise line height
-		var testText = self.elem.cloneNode(true);
-		testText.textContent = 'X';
-		insertAfter(testText, self.elem);
-		var txtLineHeight = testText.offsetHeight;
-		remove(testText);
-
 		// extract elem styles
 		self.elemStyle = window.getComputedStyle(self.elem);
 		self.inlineStyles = {};
@@ -136,14 +130,12 @@ var StrokeText = function(elem, options) {
 			fontFamily = self.elemStyle.getPropertyValue('font-family'),
 			fontWeight = self.elemStyle.getPropertyValue('font-weight'),
 			fontStyle = self.elemStyle.getPropertyValue('font-style'),
-			canvasFont = fontStyle +' '+ fontWeight +' '+ fontSize +'/'+ txtLineHeight +'px '+ fontFamily,
-			cssLineHeight = parseFloat(self.elemStyle.getPropertyValue('line-height')),
+			txtLineHeight = parseFloat(self.elemStyle.getPropertyValue('line-height')),
+			canvasFont = fontStyle + ' ' + fontWeight + ' ' + fontSize + '/' + txtLineHeight + 'px ' + fontFamily,
 			txtAlign = self.elemStyle.getPropertyValue('text-align'),
 			txtMarginTop = parseFloat(self.elemStyle.getPropertyValue('margin-top')),
 			txtMarginBottom = parseFloat(self.elemStyle.getPropertyValue('margin-bottom')),
 			edgePos = strokeWidth;
-
-		if (txtLineHeight < fontSizeFloat) txtLineHeight = cssLineHeight;
 
 		self.containId = 'strokeText-' + Math.random().toString().substring(2),
 		self.canvasId = self.containId+'-canvas';
@@ -160,15 +152,21 @@ var StrokeText = function(elem, options) {
 		var txtCanvas = document.createElement('canvas');
 		txtCanvas.setAttribute('id', self.canvasId);
 		txtCanvas.setAttribute('width', width);
-		txtCanvas.setAttribute('height', height + (strokeWidth * 2));
+		txtCanvas.setAttribute('height', height + (strokeWidth * 4));
 		txtCanvas.style.marginTop = txtMarginTop+'px';
 		txtCanvas.style.userSelect = 'none';
+		if (self.options.debug) txtCanvas.style.border = '1px red solid';
 		
 		// insert container and contents
 		insertAfter(txtContain, self.elem);
 		remove(self.elem);
 		self.elem.style.position = 'absolute';
-		self.elem.style.top = strokeWidth + 'px';
+		var elemTopPos = strokeWidth + 1;
+		if (/firefox/i.test(window.navigator.userAgent)) {
+			elemTopPos -= 1; // firefox renders text baseline slightly differently
+		}
+		self.elem.style.top = elemTopPos + 'px';
+		if (self.options.debug) self.elem.style.border = '1px yellow solid';
 		txtContain.appendChild(self.elem);
 		txtContain.appendChild(txtCanvas);
 		
@@ -177,21 +175,17 @@ var StrokeText = function(elem, options) {
 			ctx = can.getContext('2d'),
 			canvasEdgePos = 0,
 			canvasMaxWidth = width - (edgePos * 2),
-			canvasTopPos = (txtLineHeight - fontSizeFloat) / 2,
-			textBaseline = 'top';
-		// detect Firefox, because it renders textBaseline differently :/
-		if ((/firefox/i).test(navigator.userAgent)) {
-			textBaseline = 'hanging';
-			canvasTopPos = txtLineHeight - parseFloat(fontSize) - (strokeWidth / 2);
-		}
-		if (canvasTopPos < 0) canvasTopPos = 0;
+			canvasTopPos = (txtLineHeight / 2) + strokeWidth,
+			textBaseline = 'middle';
 
-		console.log('canvas top pos', canvasTopPos);
-		console.log('txtLineHeight', txtLineHeight);
-		console.log('cssLineHeight', cssLineHeight);
-		console.log('fontSize', fontSize);
-		console.log('height', height);
-		console.log('---');
+		if (self.options.debug) {
+			console.info('┎--- strokeText.js debug');
+			console.info('┃ canvasFont:', canvasFont);
+			console.info('┃ canvasTopPos:', canvasTopPos);
+			console.info('┃ elemTopPos:', elemTopPos);
+			console.info('┃ txtLineHeight:', txtLineHeight);
+			console.info('┖---');
+		}
 
 		switch (txtAlign) {
 			case 'center':

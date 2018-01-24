@@ -36,6 +36,7 @@ function updateCodeVisualizer(code) {
 	visualizer.innerHTML = code;	
 }
 function initStrokeText() {
+	if (strokeText) strokeText.reset();
 	strokeText = new StrokeText(target, demoOptions);
 	document.getElementById('version').innerHTML = 'v '+strokeText.version;
 	if (objectSize(demoOptions) > 0) {
@@ -45,7 +46,7 @@ function initStrokeText() {
 				var lineDashArray = demoOptions[key];
 				code += '&emsp;&emsp;'+key+': ['+lineDashArray[0]+', '+lineDashArray[1]+'],<br>'
 			}
-			else if (key === 'miterLimit') {
+			else if (key === 'miterLimit' || key === 'debug') {
 				code += '&emsp;&emsp;'+key+': '+demoOptions[key]+',<br>'
 			}
 			else {
@@ -119,6 +120,10 @@ function changeLineDashArray() {
 function changeMiterLimit() {
 	var miterLimit = document.getElementById('miterLimit').value;
 	demoOptions.miterLimit = parseFloat(miterLimit);
+	initAndExecuteStrokeText();
+}
+function toggleDebug(checkbox) {
+	demoOptions.debug = checkbox.checked;
 	initAndExecuteStrokeText();
 }
 /*
