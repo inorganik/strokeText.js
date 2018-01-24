@@ -8,7 +8,7 @@
 var StrokeText = function(elem, options) {
 
 	var self = this;
-	self.version = '0.9.0';
+	self.version = '0.10.0';
 	self.elem = (typeof elem === 'string') ? document.getElementById(elem) : elem;
 
 	// default options
@@ -100,6 +100,10 @@ var StrokeText = function(elem, options) {
 
 		self.reset();
 
+		// ensure valid params
+		strokeWidth = Math.abs(strokeWidth);
+		strokeColor = (typeof strokeColor === 'string') ? strokeColor : 'red';
+
 		// get precise line height
 		var testText = self.elem.cloneNode(true);
 		testText.textContent = 'X';
@@ -115,37 +119,40 @@ var StrokeText = function(elem, options) {
 			self.inlineStyles[styleKey] = self.elemStyle[styleKey];
 		}
 
+		var txt = self.elem.textContent.trim();		
+		if (!txt) { return; } // error check
+
 		// adjust elem styles before measurements
+		var fontSize = self.elemStyle.getPropertyValue('font-size'),
+			fontSizeFloat = parseFloat(fontSize);
 		self.elem.style.width = '100%';
 		self.elem.style.boxSizing = 'border-box';
-		self.elem.style.padding = '0 ' + strokeWidth + 'px';
+		self.elem.style.padding = '0 '+ strokeWidth + 'px';
 			
 		// measurements
 		var width = self.elem.offsetWidth,
 			height = self.elem.offsetHeight,
-			txt = self.elem.textContent.trim(),
 			txtDisplay = self.elemStyle.getPropertyValue('display'),
 			fontFamily = self.elemStyle.getPropertyValue('font-family'),
-			fontSize = self.elemStyle.getPropertyValue('font-size'),
 			fontWeight = self.elemStyle.getPropertyValue('font-weight'),
 			fontStyle = self.elemStyle.getPropertyValue('font-style'),
-			canvasFont = fontStyle +' '+ fontWeight +' '+ fontSize +' '+ fontFamily,
+			canvasFont = fontStyle +' '+ fontWeight +' '+ fontSize +'/'+ txtLineHeight +'px '+ fontFamily,
+			cssLineHeight = parseFloat(self.elemStyle.getPropertyValue('line-height')),
 			txtAlign = self.elemStyle.getPropertyValue('text-align'),
 			txtMarginTop = parseFloat(self.elemStyle.getPropertyValue('margin-top')),
 			txtMarginBottom = parseFloat(self.elemStyle.getPropertyValue('margin-bottom')),
 			edgePos = strokeWidth;
 
-		// error check
-		if (!txt) { return; }
+		if (txtLineHeight < fontSizeFloat) txtLineHeight = cssLineHeight;
 
-		self.containId = 'outline-text-' + Math.random().toString().substring(2),
+		self.containId = 'strokeText-' + Math.random().toString().substring(2),
 		self.canvasId = self.containId+'-canvas';
 		
 		// container elem
 		var txtContain = document.createElement('div');
 		txtContain.setAttribute('id', self.containId);
 		txtContain.style.width = width +'px';
-		txtContain.style.height = (height + txtMarginTop + txtMarginBottom) +'px';
+		txtContain.style.height = (height + txtMarginTop + txtMarginBottom + (strokeWidth * 2)) +'px';
 		txtContain.style.display = txtDisplay;
 		txtContain.style.position = 'relative';
 		
@@ -153,7 +160,7 @@ var StrokeText = function(elem, options) {
 		var txtCanvas = document.createElement('canvas');
 		txtCanvas.setAttribute('id', self.canvasId);
 		txtCanvas.setAttribute('width', width);
-		txtCanvas.setAttribute('height', height + strokeWidth);
+		txtCanvas.setAttribute('height', height + (strokeWidth * 2));
 		txtCanvas.style.marginTop = txtMarginTop+'px';
 		txtCanvas.style.userSelect = 'none';
 		
@@ -161,7 +168,7 @@ var StrokeText = function(elem, options) {
 		insertAfter(txtContain, self.elem);
 		remove(self.elem);
 		self.elem.style.position = 'absolute';
-		self.elem.style.top = 0;
+		self.elem.style.top = strokeWidth + 'px';
 		txtContain.appendChild(self.elem);
 		txtContain.appendChild(txtCanvas);
 		
@@ -170,13 +177,22 @@ var StrokeText = function(elem, options) {
 			ctx = can.getContext('2d'),
 			canvasEdgePos = 0,
 			canvasMaxWidth = width - (edgePos * 2),
-			canvasTopPos = 0,
+			canvasTopPos = (txtLineHeight - fontSizeFloat) / 2,
 			textBaseline = 'top';
-		// detect Firefox, because it renders textBaseline differently >:(
+		// detect Firefox, because it renders textBaseline differently :/
 		if ((/firefox/i).test(navigator.userAgent)) {
 			textBaseline = 'hanging';
 			canvasTopPos = txtLineHeight - parseFloat(fontSize) - (strokeWidth / 2);
 		}
+		if (canvasTopPos < 0) canvasTopPos = 0;
+
+		console.log('canvas top pos', canvasTopPos);
+		console.log('txtLineHeight', txtLineHeight);
+		console.log('cssLineHeight', cssLineHeight);
+		console.log('fontSize', fontSize);
+		console.log('height', height);
+		console.log('---');
+
 		switch (txtAlign) {
 			case 'center':
 				canvasEdgePos = width / 2;
