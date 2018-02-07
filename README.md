@@ -40,7 +40,8 @@ var options = {
 	lineJoin: 'round', // ['bevel', 'round', 'miter']
 	miterLimit: 10, // control spikeyness
 	lineDashArray: [0, 0], // for dashed lines: [line, gap]
-	debug: false // examine measurements and properties used
+	debug: false, // examine measurements and properties used
+	disableForFirefox: false // some fonts don't stroke well in firefox, bc they are rendered at varying baselines
 }
 var strokeText = new StrokeText('targetId', options);
 ```
@@ -64,9 +65,13 @@ window.onorientationchange = handleViewportChange;
 
 ### Known issues
 
+- In Firefox, some fonts (usually @font-face fonts) don't stroke well because they are rendered at a varying baseline. If this is your case, use the `disableForFirefox` option.
 - Does not support `text-decoration`, e.g. strike-through or underline.
 - Very thick strokes on certain fonts can leave cutouts on circle shapes like periods or dotted characters.
 - Emojis don't get stroked 😬 due to the limitations of canvas.
+
+### TODO
+- Better Firefox support. Due to a [very old Firefox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=737852), canvas renders baselines of some fonts differently than html text. The issue is easily witnessed on the demo in Firefox. Some fonts have the stroke lined up perfectly, but for others it is too high, to a varying degree. 
 
 ### Contributing
 

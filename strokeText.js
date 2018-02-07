@@ -8,7 +8,7 @@
 var StrokeText = function(elem, options) {
 
 	var self = this;
-	self.version = '0.10.1';
+	self.version = '0.11.0';
 	self.elem = (typeof elem === 'string') ? document.getElementById(elem) : elem;
 
 	// default options
@@ -17,7 +17,8 @@ var StrokeText = function(elem, options) {
 		lineJoin: 'round',
 		miterLimit: 10,
 		lineDashArray: [0, 0],
-		debug: false
+		debug: false,
+		disableForFirefox: false
 	}
 	// extend default options with passed options object
 	if (options && typeof options === 'object') {
@@ -37,6 +38,11 @@ var StrokeText = function(elem, options) {
 	function remove(node) {
 		if (node && node.parentNode) {
 			node.parentNode.removeChild(node);
+		}
+	}
+	function logProp(prop) {
+		if (self[prop]) {
+			console.info('┃ '+prop+':', self[prop]);
 		}
 	}
 	// canvas doesn't wrap text
@@ -95,10 +101,13 @@ var StrokeText = function(elem, options) {
 			remove(container);
 		}
 	}
-
+	
 	// main functionality
 	self.stroke = function(strokeWidth, strokeColor) {
 
+		if (self.options.disableForFirefox && (/firefox/i).test(navigator.userAgent)) {
+			return;
+		}
 		self.reset();
 
 		// ensure valid params
@@ -113,8 +122,8 @@ var StrokeText = function(elem, options) {
 			self.inlineStyles[styleKey] = self.elemStyle[styleKey];
 		}
 
-		var txt = self.elem.textContent.trim();		
-		if (!txt) { return; } // error check
+		self.txt = self.elem.textContent.trim();		
+		if (!self.txt) { return; } // error check
 
 		// adjust elem styles before measurements
 		var fontSize = self.elemStyle.getPropertyValue('font-size'),
@@ -131,57 +140,47 @@ var StrokeText = function(elem, options) {
 			fontWeight = self.elemStyle.getPropertyValue('font-weight'),
 			fontStyle = self.elemStyle.getPropertyValue('font-style'),
 			txtLineHeight = parseFloat(self.elemStyle.getPropertyValue('line-height')),
-			canvasFont = fontStyle + ' ' + fontWeight + ' ' + fontSize + '/' + txtLineHeight + 'px ' + fontFamily,
 			txtAlign = self.elemStyle.getPropertyValue('text-align'),
 			txtMarginTop = parseFloat(self.elemStyle.getPropertyValue('margin-top')),
 			txtMarginBottom = parseFloat(self.elemStyle.getPropertyValue('margin-bottom')),
 			edgePos = strokeWidth;
 
+		self.canvasFont = fontStyle + ' ' + fontWeight + ' ' + fontSize + '/' + txtLineHeight + 'px ' + fontFamily;
 		self.containId = 'strokeText-' + Math.random().toString().substring(2),
 		self.canvasId = self.containId+'-canvas';
 		
 		// container elem
-		var txtContain = document.createElement('div');
-		txtContain.setAttribute('id', self.containId);
-		txtContain.style.width = width +'px';
-		txtContain.style.height = (height + txtMarginTop + txtMarginBottom + (strokeWidth * 2)) +'px';
-		txtContain.style.display = txtDisplay;
-		txtContain.style.position = 'relative';
+		var container = document.createElement('div');
+		container.setAttribute('id', self.containId);
+		container.style.width = width +'px';
+		container.style.height = (height + txtMarginTop + txtMarginBottom + (strokeWidth * 2)) +'px';
+		container.style.display = txtDisplay;
+		container.style.position = 'relative';
 		
 		// canvas elem
-		var txtCanvas = document.createElement('canvas');
-		txtCanvas.setAttribute('id', self.canvasId);
-		txtCanvas.setAttribute('width', width);
-		txtCanvas.setAttribute('height', height + (strokeWidth * 4));
-		txtCanvas.style.marginTop = txtMarginTop+'px';
-		txtCanvas.style.userSelect = 'none';
-		if (self.options.debug) txtCanvas.style.border = '1px red solid';
+		var canvas = document.createElement('canvas');
+		canvas.setAttribute('id', self.canvasId);
+		canvas.setAttribute('width', width);
+		canvas.setAttribute('height', height + (strokeWidth * 4));
+		canvas.style.marginTop = txtMarginTop+'px';
+		canvas.style.userSelect = 'none';
+		if (self.options.debug) canvas.style.border = '1px red solid';
 		
 		// insert container and contents
-		insertAfter(txtContain, self.elem);
+		insertAfter(container, self.elem);
 		remove(self.elem);
 		self.elem.style.position = 'absolute';
 		var elemTopPos = strokeWidth + 'px';
 		self.elem.style.top = elemTopPos;
 		if (self.options.debug) self.elem.style.border = '1px yellow solid';
-		txtContain.appendChild(self.elem);
-		txtContain.appendChild(txtCanvas);
+		container.appendChild(self.elem);
+		container.appendChild(canvas);
 		
 		// rendering stroked text
-		var can = document.getElementById(self.canvasId),
-			ctx = can.getContext('2d'),
+		var ctx = canvas.getContext('2d'),
 			canvasEdgePos = 0,
-			canvasMaxWidth = width - (edgePos * 2),
-			canvasTopPos = (txtLineHeight / 2) + strokeWidth,
-			textBaseline = 'middle';
-
-		if (self.options.debug) {
-			console.info('┎--- strokeText.js debug');
-			console.info('┃ canvasFont:', canvasFont);
-			console.info('┃ canvasTopPos:', canvasTopPos);
-			console.info('┃ txtLineHeight:', txtLineHeight);
-			console.info('┖---');
-		}
+			canvasMaxWidth = width - (edgePos * 2);
+		self.canvasTopPos = (txtLineHeight / 2) + strokeWidth;
 
 		switch (txtAlign) {
 			case 'center':
@@ -197,8 +196,8 @@ var StrokeText = function(elem, options) {
 				self.elem.style.left = edgePos;
 		}
 		if (ctx) {
-			ctx.font = canvasFont;
-			ctx.textBaseline = textBaseline;
+			ctx.font = self.canvasFont;
+			ctx.textBaseline = 'middle';
 			ctx.textAlign = txtAlign;
 			ctx.strokeStyle = strokeColor;
 			ctx.lineJoin = self.options.lineJoin;
@@ -206,7 +205,16 @@ var StrokeText = function(elem, options) {
 			ctx.setLineDash(self.options.lineDashArray);
 			ctx.miterLimit = self.options.miterLimit;
 			ctx.lineWidth = strokeWidth * 2;
-			wrapText(ctx, txt, canvasEdgePos, canvasTopPos, canvasMaxWidth, txtLineHeight);
+			
+			if (self.options.debug) {
+				console.info('┎--- ', self.containId);
+				console.info('┃ "'+self.txt+'"');
+				logProp('canvasFont');
+				logProp('canvasTopPos');
+				console.info('┖---');
+			}
+
+			wrapText(ctx, self.txt, canvasEdgePos, self.canvasTopPos, canvasMaxWidth, txtLineHeight);
 		}
 	};
 }

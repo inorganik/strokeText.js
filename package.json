@@ -1,6 +1,6 @@
 {
   "name": "stroketext.js",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Simple, pixel-perfect text stroking for the web.",
   "main": "./dist/strokeText.min.js",
   "scripts": {
