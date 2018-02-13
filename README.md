@@ -63,6 +63,15 @@ window.onresize = handleViewportChange;
 window.onorientationchange = handleViewportChange;
 ```
 
+### Angular
+
+Here's an example of how to use strokeText.js in an Angular directive, and react to text changes:
+https://plnkr.co/edit/wJM9InkTxdDn3GIVS4yy?p=preview
+
+### jQuery
+
+A jQuery plugin is included, but can't be installed via npm. It's dependent upon strokeText.js.
+
 ### Known issues
 
 - In Firefox, some fonts (usually @font-face fonts) don't stroke well because they are rendered at a varying baseline. If this is your case, use the `disableForFirefox` option.
@@ -80,4 +89,5 @@ window.onorientationchange = handleViewportChange;
 - Run `npm install` 
 - Run `gulp` to create the minified strokeText module in the dist folder
 
-Fiddle: https://jsfiddle.net/p8vyyskd/
+Fiddle: https://jsfiddle.net/cburoure/
+

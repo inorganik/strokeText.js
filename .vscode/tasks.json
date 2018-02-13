@@ -4,11 +4,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Open in chrome",
+            "label": "Open demo in chrome",
             "type": "shell",
             "command": "/usr/bin/open -a '/Applications/Google Chrome.app'",
             "args": [
-                "${file}"
+                "${workspaceFolder}/index.html"
             ],
             "problemMatcher": []
         }

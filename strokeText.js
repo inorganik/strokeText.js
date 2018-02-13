@@ -1,14 +1,14 @@
 /*
 
-	strokeText.js
-	by @inorganik
+strokeText.js
+by @inorganik
 
 */
 
 var StrokeText = function(elem, options) {
 
 	var self = this;
-	self.version = '0.11.0';
+	self.version = '0.12.0';
 	self.elem = (typeof elem === 'string') ? document.getElementById(elem) : elem;
 
 	// default options
@@ -30,12 +30,12 @@ var StrokeText = function(elem, options) {
 	}
 
 	// helper functions
-	function insertAfter(node, refNode) {
+	function insertAfterNode(node, refNode) {
 		if (node && refNode && refNode.parentNode) {
 			refNode.parentNode.insertBefore(node, refNode.nextSibling);
 		}
 	}
-	function remove(node) {
+	function removeNode(node) {
 		if (node && node.parentNode) {
 			node.parentNode.removeChild(node);
 		}
@@ -45,6 +45,15 @@ var StrokeText = function(elem, options) {
 			console.info('┃ '+prop+':', self[prop]);
 		}
 	}
+	function getLineHeight(elem) {
+		var testText = elem.cloneNode(true);
+		testText.textContent = 'fXg';
+		insertAfterNode(testText, elem);
+		var lineHeight = testText.offsetHeight;
+		removeNode(testText);
+		return lineHeight;
+	}
+
 	// canvas doesn't wrap text
 	function wrapText(context, text, x, y, maxWidth, lineHeight) {
 		var words = text.split(' '),
@@ -74,8 +83,8 @@ var StrokeText = function(elem, options) {
 				var nextWord = word;
 				while (nextWord.indexOf('-') > -1) {
 					var hyphen = nextWord.indexOf('-') + 1,
-						segment = nextWord.substring(0, hyphen),
-						nextWord = nextWord.substring(hyphen);
+						segment = nextWord.substring(0, hyphen);
+					nextWord = nextWord.substring(hyphen);
 					measureAndProcess(segment, i);
 				}
 				measureAndProcess(nextWord, i);
@@ -91,17 +100,17 @@ var StrokeText = function(elem, options) {
 	self.reset = function() {
 		var container = document.getElementById(self.containId);
 		if (container) {
-			remove(self.elem);
-			remove(self.canvasId);
-			insertAfter(self.elem, container);
+			removeNode(self.elem);
+			removeNode(self.canvasId);
+			insertAfterNode(self.elem, container);
 			self.elem.style = self.elemStyle;
 			for (var style in self.inlineStyles) {
 				self.elem.style[style] = self.inlineStyles[style];
 			}
-			remove(container);
+			removeNode(container);
 		}
 	}
-	
+
 	// main functionality
 	self.stroke = function(strokeWidth, strokeColor) {
 
@@ -123,7 +132,7 @@ var StrokeText = function(elem, options) {
 		}
 
 		self.txt = self.elem.textContent.trim();		
-		if (!self.txt) { return; } // error check
+		if (!self.txt) { return; }
 
 		// adjust elem styles before measurements
 		var fontSize = self.elemStyle.getPropertyValue('font-size'),
@@ -144,7 +153,10 @@ var StrokeText = function(elem, options) {
 			txtMarginTop = parseFloat(self.elemStyle.getPropertyValue('margin-top')),
 			txtMarginBottom = parseFloat(self.elemStyle.getPropertyValue('margin-bottom')),
 			edgePos = strokeWidth;
-
+		if (isNaN(txtLineHeight)) {
+			txtLineHeight = self.getLineHeight(self.elem);
+		}
+		self.txtLineHeight = txtLineHeight;
 		self.canvasFont = fontStyle + ' ' + fontWeight + ' ' + fontSize + '/' + txtLineHeight + 'px ' + fontFamily;
 		self.containId = 'strokeText-' + Math.random().toString().substring(2),
 		self.canvasId = self.containId+'-canvas';
@@ -167,8 +179,8 @@ var StrokeText = function(elem, options) {
 		if (self.options.debug) canvas.style.border = '1px red solid';
 		
 		// insert container and contents
-		insertAfter(container, self.elem);
-		remove(self.elem);
+		insertAfterNode(container, self.elem);
+		removeNode(self.elem);
 		self.elem.style.position = 'absolute';
 		var elemTopPos = strokeWidth + 'px';
 		self.elem.style.top = elemTopPos;
@@ -211,6 +223,7 @@ var StrokeText = function(elem, options) {
 				console.info('┃ "'+self.txt+'"');
 				logProp('canvasFont');
 				logProp('canvasTopPos');
+				logProp('txtLineHeight');
 				console.info('┖---');
 			}
 
