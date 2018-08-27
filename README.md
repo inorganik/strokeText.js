@@ -66,7 +66,7 @@ window.onorientationchange = handleViewportChange;
 ### Angular
 
 Here's an example of how to use strokeText.js in an Angular directive, and react to text changes:
-https://plnkr.co/edit/wJM9InkTxdDn3GIVS4yy?p=preview
+https://stackblitz.com/edit/stroketext-angular
 
 ### jQuery
 
