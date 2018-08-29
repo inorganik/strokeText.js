@@ -4,7 +4,8 @@
   "description": "Simple, pixel-perfect text stroking for the web.",
   "main": "./dist/strokeText.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp",
+    "clean": "gulp clean"
   },
   "repository": {
     "type": "git",
@@ -21,11 +22,12 @@
   },
   "homepage": "https://inorganik.github.io/strokeText.js/",
   "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
     "del": "^3.0.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^3.0.0",
-    "gulp-wrap-umd": "^0.2.1",
-    "pump": "^2.0.0"
+    "gulp-wrap-umd": "^0.2.1"
   }
 }

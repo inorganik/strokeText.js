@@ -86,8 +86,8 @@ A jQuery plugin is included, but can't be installed via npm. It's dependent upon
 
 - Do your work on `strokeText.js`, please follow existing formatting conventions
 - In terminal, `cd` to the `strokeText.js` directory
-- Run `npm install` 
-- Run `gulp` to create the minified strokeText module in the dist folder
+- Run `npm i` 
+- Run `npm run build` to create the minified strokeText module in the dist folder
 
 Fiddle: https://jsfiddle.net/cburoure/
 
